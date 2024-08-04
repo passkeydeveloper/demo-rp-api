@@ -13,6 +13,6 @@
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello passkeys.dev!');
+		return new Response('Hello from passkeys.dev RP demo API!');
 	},
 } satisfies ExportedHandler<Env>;
