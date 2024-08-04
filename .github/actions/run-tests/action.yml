@@ -18,10 +18,13 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: "npm"
     - name: Confirm installed Node version
+      shell: bash
       run: node -v
 
     - name: Install dependencies
+      shell: bash
       run: npm ci
 
     - name: Run tests
+      shell: bash
       run: npm run test
