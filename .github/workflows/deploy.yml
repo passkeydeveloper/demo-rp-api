@@ -16,6 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/run-tests
+        with:
+          node-version: ${{ matrix.node-version }}
 
     #   # Install Node
     #   - name: Setup Node.js ${{ matrix.node-version }}
