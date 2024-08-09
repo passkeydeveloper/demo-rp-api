@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest';
 // `Request` to pass to `worker.fetch()`.
 // const IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
 
-describe('Hello World worker', () => {
+describe('Routing tests', () => {
 	// it('responds with Hello World! (unit style)', async () => {
 	// 	const request = new IncomingRequest('http://example.com');
 	// 	// Create an empty context to pass to `worker.fetch()`.
@@ -22,4 +22,24 @@ describe('Hello World worker', () => {
 	// 	const response = await SELF.fetch('https://example.com');
 	// 	expect(await response.text()).toMatchInlineSnapshot(`"Hello from passkeys.dev RP demo API!"`);
 	// });
+
+	it('recognizes GET /registration/options', async () => {
+		const response = await SELF.fetch('https://example.com/registration/options', { method: 'GET' });
+		expect(response.status).toBe(200);
+	})
+
+	it('recognizes GET /authentication/options', async () => {
+		const response = await SELF.fetch('https://example.com/authentication/options', { method: 'GET' });
+		expect(response.status).toBe(200);
+	})
+
+	it('recognizes POST /registration/verify', async () => {
+		const response = await SELF.fetch('https://example.com/registration/verify', { method: 'POST' });
+		expect(response.status).toBe(200);
+	})
+
+	it('recognizes POST /authentication/options', async () => {
+		const response = await SELF.fetch('https://example.com/registration/verify', { method: 'POST' });
+		expect(response.status).toBe(200);
+	})
 });
