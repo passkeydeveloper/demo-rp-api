@@ -24,7 +24,7 @@ describe('Routing tests', () => {
 	// });
 
 	it('recognizes GET /registration/options', async () => {
-		const response = await SELF.fetch('https://example.com/registration/options', { method: 'GET' });
+		const response = await SELF.fetch('https://example.com/registration/options?username=foo', { method: 'GET' });
 		expect(response.status).toBe(200);
 	});
 
