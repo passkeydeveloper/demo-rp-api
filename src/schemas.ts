@@ -10,7 +10,13 @@ export { ZodError } from 'zod';
  * Schema for incoming query params to configure registration options
  */
 export const regOptionsInputSchema = z.object({
-	foo: z.string().optional(),
+	username: z.string(),
+	userVerification: z.enum(['discouraged', 'preferred', 'required']).default('preferred'),
+	attestation: z.enum(['none', 'direct']).default('none'),
+	attachment: z.enum(['cross-platform', 'platform']).optional(),
+	algES256: z.boolean().default(true),
+	algRS256: z.boolean().default(true),
+	discoverableCredential: z.enum(['discouraged', 'preferred', 'required']).default('required'),
 });
 
 
