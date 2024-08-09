@@ -10,9 +10,18 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+import { handleOptionsRequest, handleVerifyRequest } from './handlers';
+
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello from passkeys.dev RP demo API!');
+		// Handle the request
+		if (request.method === 'GET') {
+			return handleOptionsRequest(request);
+		} else if (request.method === 'POST') {
+			return handleVerifyRequest(request);
+		} else {
+			return new Response('Only GET and POST are supported', { status: 400 });
+		}
 	},
 } satisfies ExportedHandler<Env>;
