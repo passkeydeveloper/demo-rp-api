@@ -21,7 +21,7 @@ export default {
 		} else if (request.method === 'POST') {
 			return handleVerifyRequest(request);
 		} else {
-			return new Response('Only GET and POST are supported', { status: 400 });
+			return new Response('Only GET and POST are supported', { status: 405 });
 		}
 	},
 } satisfies ExportedHandler<Env>;
