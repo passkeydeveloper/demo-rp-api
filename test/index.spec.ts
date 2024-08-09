@@ -26,20 +26,25 @@ describe('Routing tests', () => {
 	it('recognizes GET /registration/options', async () => {
 		const response = await SELF.fetch('https://example.com/registration/options', { method: 'GET' });
 		expect(response.status).toBe(200);
-	})
+	});
 
 	it('recognizes GET /authentication/options', async () => {
 		const response = await SELF.fetch('https://example.com/authentication/options', { method: 'GET' });
 		expect(response.status).toBe(200);
-	})
+	});
 
 	it('recognizes POST /registration/verify', async () => {
 		const response = await SELF.fetch('https://example.com/registration/verify', { method: 'POST' });
 		expect(response.status).toBe(200);
-	})
+	});
 
 	it('recognizes POST /authentication/options', async () => {
 		const response = await SELF.fetch('https://example.com/registration/verify', { method: 'POST' });
 		expect(response.status).toBe(200);
-	})
+	});
+
+	it('errors on non-GET and non-POST requests', async () => {
+		const response = await SELF.fetch('https://example.com', { method: 'PUT' });
+		expect(response.status).toBe(405);
+	});
 });
