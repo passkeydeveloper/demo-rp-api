@@ -1,2 +1,4 @@
-export { handleOptionsRequest } from './handleOptionsRequest';
-export { handleVerifyRequest } from './handleVerifyRequest';
+export { handleCreateRegOptions } from './handleCreateRegOptions';
+export { handleCreateAuthOptions } from './handleCreateAuthOptions';
+export { handleVerifyRegResponse } from './handleVerifyRegResponse';
+export { handleVerifyAuthResponse } from './handleVerifyAuthResponse';

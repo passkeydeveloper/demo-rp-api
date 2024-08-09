@@ -10,18 +10,21 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
-import { handleOptionsRequest, handleVerifyRequest } from './handlers';
+import { Hono } from 'hono';
+
+import {
+	handleCreateRegOptions,
+	handleCreateAuthOptions,
+	handleVerifyRegResponse,
+	handleVerifyAuthResponse,
+} from './handlers';
 
 
-export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		// Handle the request
-		if (request.method === 'GET') {
-			return handleOptionsRequest(request);
-		} else if (request.method === 'POST') {
-			return handleVerifyRequest(request);
-		} else {
-			return new Response('Only GET and POST are supported', { status: 405 });
-		}
-	},
-} satisfies ExportedHandler<Env>;
+const app = new Hono();
+
+app.get('/registration/options', handleCreateRegOptions);
+app.get('/authentication/options', handleCreateAuthOptions);
+app.post('/registration/verify', handleVerifyRegResponse);
+app.post('/registration/verify', handleVerifyAuthResponse);
+
+export default app;

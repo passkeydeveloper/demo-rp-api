@@ -45,6 +45,6 @@ describe('Routing tests', () => {
 
 	it('errors on non-GET and non-POST requests', async () => {
 		const response = await SELF.fetch('https://example.com', { method: 'PUT' });
-		expect(response.status).toBe(405);
+		expect(response.status).toBe(404);
 	});
 });
