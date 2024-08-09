@@ -10,9 +10,21 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+import { Hono } from 'hono';
 
-export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello from passkeys.dev RP demo API!');
-	},
-} satisfies ExportedHandler<Env>;
+import {
+	handleCreateRegOptions,
+	handleCreateAuthOptions,
+	handleVerifyRegResponse,
+	handleVerifyAuthResponse,
+} from './handlers';
+
+
+const app = new Hono();
+
+app.get('/registration/options', handleCreateRegOptions);
+app.get('/authentication/options', handleCreateAuthOptions);
+app.post('/registration/verify', handleVerifyRegResponse);
+app.post('/registration/verify', handleVerifyAuthResponse);
+
+export default app;
