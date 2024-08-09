@@ -9,7 +9,9 @@ export { ZodError } from 'zod';
 /**
  * Schema for incoming query params to configure registration options
  */
-export const regOptionsInputSchema = z.object({});
+export const regOptionsInputSchema = z.object({
+	foo: z.string().optional(),
+});
 
 
 /**
