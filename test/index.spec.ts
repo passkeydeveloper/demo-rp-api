@@ -1,6 +1,7 @@
 // test/index.spec.ts
 import { env, createExecutionContext, waitOnExecutionContext, SELF } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
+import { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
 // import worker from '../src/index';
 
 // For now, you'll need to do something like this to get a correctly-typed
@@ -46,5 +47,40 @@ describe('Routing tests', () => {
 	it('errors on non-GET and non-POST requests', async () => {
 		const response = await SELF.fetch('https://example.com', { method: 'PUT' });
 		expect(response.status).toBe(404);
+	});
+});
+
+describe('registration options', () => {
+	it('should require username', async () => {
+		const response = await SELF.fetch('https://example.com/registration/options', { method: 'GET' });
+		expect(response.status).toBe(400);
+		expect(await response.text()).toMatch("username");
+	});
+
+	it('should generate basic options', async () => {
+		const username = 'mmiller';
+		const response = await SELF.fetch(`https://example.com/registration/options?username=${username}`, { method: 'GET' });
+		expect(response.status).toBe(200);
+		expect(response.headers.get('Content-Type')).toMatch('application/json');
+
+		const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+		expect(opts.challenge).toBeTypeOf('string');
+		expect(opts.rp.name).toEqual('passkeys.dev');
+		expect(opts.rp.id).toEqual('passkeys.dev');
+		expect(opts.user.id).toBeTypeOf('string');
+		expect(opts.user.name).toEqual(username);
+		expect(opts.user.displayName).toEqual('');
+		expect(opts.pubKeyCredParams).toEqual([
+			{ "alg": -7, "type": "public-key" },
+			{ "alg": -257, "type": "public-key" },
+		]);
+		expect(opts.timeout).toEqual(60000);
+		expect(opts.attestation).toEqual('none');
+		expect(opts.excludeCredentials).toEqual([]);
+		expect(opts.authenticatorSelection?.residentKey).toEqual('required');
+		expect(opts.authenticatorSelection?.userVerification).toEqual('preferred');
+		expect(opts.authenticatorSelection?.requireResidentKey).toEqual(true);
+		expect(opts.extensions?.credProps).toEqual(true);
 	});
 });
