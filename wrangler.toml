@@ -1,7 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "demo-rp-api"
 main = "src/index.ts"
-compatibility_date = "2024-07-29"
+compatibility_date = "2024-07-25"
 compatibility_flags = ["nodejs_compat"]
 
 # Automatically place your workloads in an optimal location to minimize latency.
