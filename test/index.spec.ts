@@ -25,12 +25,12 @@ describe('Routing tests', () => {
 	// });
 
 	it('recognizes GET /registration/options', async () => {
-		const response = await SELF.fetch('https://example.com/registration/options?username=foo', { method: 'GET' });
+		const response = await SELF.fetch('https://example.com/registration/options?username=foo');
 		expect(response.status).toBe(200);
 	});
 
 	it('recognizes GET /authentication/options', async () => {
-		const response = await SELF.fetch('https://example.com/authentication/options', { method: 'GET' });
+		const response = await SELF.fetch('https://example.com/authentication/options');
 		expect(response.status).toBe(200);
 	});
 
@@ -50,16 +50,16 @@ describe('Routing tests', () => {
 	});
 });
 
-describe('registration options', () => {
-	it('should require username', async () => {
-		const response = await SELF.fetch('https://example.com/registration/options', { method: 'GET' });
+describe('Registration options', () => {
+	it('requires username', async () => {
+		const response = await SELF.fetch('https://example.com/registration/options');
 		expect(response.status).toBe(400);
 		expect(await response.text()).toMatch("username");
 	});
 
-	it('should generate basic options', async () => {
+	it('generates basic options', async () => {
 		const username = 'mmiller';
-		const response = await SELF.fetch(`https://example.com/registration/options?username=${username}`, { method: 'GET' });
+		const response = await SELF.fetch(`https://example.com/registration/options?username=${username}`);
 		expect(response.status).toBe(200);
 		expect(response.headers.get('Content-Type')).toMatch('application/json');
 
@@ -82,5 +82,142 @@ describe('registration options', () => {
 		expect(opts.authenticatorSelection?.userVerification).toEqual('preferred');
 		expect(opts.authenticatorSelection?.requireResidentKey).toEqual(true);
 		expect(opts.extensions?.credProps).toEqual(true);
+	});
+
+	describe('Param: algES256', () => {
+		it('omits ES256 when param is false', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&algES256=false',
+			);
+
+			const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts.pubKeyCredParams).toEqual([
+				{ "alg": -257, "type": "public-key" },
+			])
+		});
+
+		it('errors on bad param value', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&algES256=maru',
+				{ method: 'GET' },
+			);
+			expect(response.status).toBe(400);
+			expect(await response.text()).toMatch("algES256");
+		});
+	});
+
+	describe('Param: algRS256', () => {
+		it('omits RS256 when param is false', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&algRS256=false',
+			);
+
+			const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts.pubKeyCredParams).toEqual([
+				{ "alg": -7, "type": "public-key" },
+			]);
+		});
+
+		it('errors on bad param value', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&algRS256=batsu',
+			);
+			expect(response.status).toBe(400);
+			expect(await response.text()).toMatch("algRS256");
+		});
+	});
+
+	describe('Param: attestation', () => {
+		it.each(['none', 'direct'])('supports value "%s"', async (val) => {
+			const response = await SELF.fetch(
+				`https://example.com/registration/options?username=mmiller&attestation=${val}`,
+			);
+
+			const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts.attestation).toEqual(val);
+		});
+
+		it('errors on bad param value', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&attestation=sometimes',
+			);
+			expect(response.status).toBe(400);
+			expect(await response.text()).toMatch("attestation");
+		});
+	});
+
+	describe('Param: discoverableCredential', () => {
+		it.each([
+			'discouraged',
+			'preferred',
+			'required',
+		])('supports value "%s"', async (val) => {
+			const response = await SELF.fetch(
+				`https://example.com/registration/options?username=mmiller&discoverableCredential=${val}`,
+			);
+
+			const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts.authenticatorSelection?.residentKey).toEqual(val);
+			expect(opts.authenticatorSelection?.requireResidentKey).toEqual(val === 'required');
+		});
+
+		it('errors on bad param value', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&discoverableCredential=sure',
+			);
+			expect(response.status).toBe(400);
+			expect(await response.text()).toMatch("discoverableCredential");
+		});
+	});
+
+	describe('Param: userVerification', () => {
+		it.each([
+			'discouraged',
+			'preferred',
+			'required',
+		])('supports value "%s"', async (val) => {
+			const response = await SELF.fetch(
+				`https://example.com/registration/options?username=mmiller&userVerification=${val}`,
+			);
+
+			const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts.authenticatorSelection?.userVerification).toEqual(val);
+		});
+
+		it('errors on bad param value', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&userVerification=yesButNotCached',
+			);
+			expect(response.status).toBe(400);
+			expect(await response.text()).toMatch("userVerification");
+		});
+	});
+
+	describe('Param: attachment', () => {
+		it.each([
+			'cross-platform',
+			'platform',
+		])('supports value "%s"', async (val) => {
+			const response = await SELF.fetch(
+				`https://example.com/registration/options?username=mmiller&attachment=${val}`,
+			);
+
+			const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts.authenticatorSelection?.authenticatorAttachment).toEqual(val);
+		});
+
+		it('errors on bad param value', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?username=mmiller&attachment=hybrid',
+			);
+			expect(response.status).toBe(400);
+			expect(await response.text()).toMatch("attachment");
+		});
 	});
 });
