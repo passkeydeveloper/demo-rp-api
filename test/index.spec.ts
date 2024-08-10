@@ -84,6 +84,42 @@ describe('Registration options', () => {
 		expect(opts.extensions?.credProps).toEqual(true);
 	});
 
+	describe('Param: userID', () => {
+		it('uses specified user ID', async () => {
+			const userID = '1234';
+			const response = await SELF.fetch(
+				`https://example.com/registration/options?userName=mmiller&userID=${userID}`,
+			);
+
+			const opts = await response.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts.user.id).toEqual(userID);
+		});
+
+		it('generates unique user ID when omitted', async () => {
+			const response1 = await SELF.fetch(
+				'https://example.com/registration/options?userName=mmiller',
+			);
+			const opts1 = await response1.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			const response2 = await SELF.fetch(
+				'https://example.com/registration/options?userName=mmiller',
+			);
+			const opts2 = await response2.json() as PublicKeyCredentialCreationOptionsJSON;
+
+			expect(opts1.user.id).not.toEqual(opts2.user.id);
+		});
+
+		it('errors on bad param value', async () => {
+			const response = await SELF.fetch(
+				'https://example.com/registration/options?userName=mmiller&userID=mmiller@example.com',
+			);
+
+			expect(response.status).toBe(400);
+			expect(await response.text()).toMatch("userID");
+		});
+	});
+
 	describe('Param: algES256', () => {
 		it('omits ES256 when param is false', async () => {
 			const response = await SELF.fetch(

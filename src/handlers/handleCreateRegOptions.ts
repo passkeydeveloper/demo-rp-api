@@ -2,7 +2,7 @@ import { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import { zfd } from 'zod-form-data';
 import { generateRegistrationOptions } from '@simplewebauthn/server';
-import { cose } from '@simplewebauthn/server/helpers';
+import { cose, isoBase64URL } from '@simplewebauthn/server/helpers';
 
 import { ZodError, regOptionsInputSchema } from '../schemas';
 
@@ -27,6 +27,7 @@ export async function handleCreateRegOptions(context: Context): Promise<Response
 		discoverableCredential,
 		userVerification,
 		userName,
+		userID,
 		attachment,
 	} = parsedInput;
 
@@ -42,10 +43,16 @@ export async function handleCreateRegOptions(context: Context): Promise<Response
 		supportedAlgorithmIDs.push(cose.COSEALG.RS256);
 	}
 
+	let userIDBytes = undefined;
+	if (userID) {
+		userIDBytes = isoBase64URL.toBuffer(userID);
+	}
+
 	const opts = await generateRegistrationOptions({
 		rpID: RP_ID,
 		rpName: RP_NAME,
 		userName,
+		userID: userIDBytes,
 		attestationType: attestation,
 		authenticatorSelection: {
 			authenticatorAttachment: attachment,
