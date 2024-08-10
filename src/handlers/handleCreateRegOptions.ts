@@ -26,7 +26,7 @@ export async function handleCreateRegOptions(context: Context): Promise<Response
 		attestation,
 		discoverableCredential,
 		userVerification,
-		username,
+		userName,
 		attachment,
 	} = parsedInput;
 
@@ -45,7 +45,7 @@ export async function handleCreateRegOptions(context: Context): Promise<Response
 	const opts = await generateRegistrationOptions({
 		rpID: RP_ID,
 		rpName: RP_NAME,
-		userName: username,
+		userName,
 		attestationType: attestation,
 		authenticatorSelection: {
 			authenticatorAttachment: attachment,

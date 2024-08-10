@@ -39,7 +39,7 @@ function castToBoolean() {
  * Schema for incoming query params to configure registration options
  */
 export const regOptionsInputSchema = z.object({
-	username: z.string(),
+	userName: z.string(),
 	userVerification: z.enum(['discouraged', 'preferred', 'required']).default('preferred'),
 	attestation: z.enum(['none', 'direct']).default('none'),
 	attachment: z.enum(['cross-platform', 'platform']).optional(),
