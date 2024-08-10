@@ -11,6 +11,7 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
 import {
 	handleCreateRegOptions,
@@ -21,6 +22,18 @@ import {
 
 
 const app = new Hono();
+
+// Set up CORS headers
+app.use('*', async (ctx, next) => {
+	const corsMiddleware = cors({
+		origin: [
+			'http://localhost:8787',
+			// TODO: Populate other origins from `ctx.env` later
+		],
+	});
+
+	return corsMiddleware(ctx, next);
+});
 
 app.get('/registration/options', handleCreateRegOptions);
 app.get('/authentication/options', handleCreateAuthOptions);
