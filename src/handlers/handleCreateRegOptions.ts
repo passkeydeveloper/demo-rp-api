@@ -11,6 +11,7 @@ import { ZodError, regOptionsInputSchema } from '../schemas';
  * Generate registration options
  */
 export async function handleCreateRegOptions(context: Context): Promise<Response> {
+	// Parse options from query params
 	let parsedInput;
 	try {
 		parsedInput = zfd.formData(regOptionsInputSchema).parse(context.req.query());
@@ -31,17 +32,14 @@ export async function handleCreateRegOptions(context: Context): Promise<Response
 
 	const { RP_ID, RP_NAME } = context.env;
 
-	let supportedAlgorithmIDs = undefined;
-	if (algES256 || algRS256) {
-		supportedAlgorithmIDs = [];
+	let supportedAlgorithmIDs = [];
 
-		if (algES256) {
-			supportedAlgorithmIDs.push(cose.COSEALG.ES256);
-		}
+	if (algES256) {
+		supportedAlgorithmIDs.push(cose.COSEALG.ES256);
+	}
 
-		if (algRS256) {
-			supportedAlgorithmIDs.push(cose.COSEALG.RS256);
-		}
+	if (algRS256) {
+		supportedAlgorithmIDs.push(cose.COSEALG.RS256);
 	}
 
 	const opts = await generateRegistrationOptions({
