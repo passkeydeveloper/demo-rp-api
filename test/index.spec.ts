@@ -47,4 +47,10 @@ describe('Routing tests', () => {
 		const response = await SELF.fetch('https://example.com', { method: 'PUT' });
 		expect(response.status).toBe(404);
 	});
+
+	it('sets cors headers', async () => {
+		const response = await SELF.fetch('https://example.com/registration/options');
+
+		expect(response.headers.get('Access-Control-Allow-Origin')).toMatch('http://localhost:8787');
+	});
 });
